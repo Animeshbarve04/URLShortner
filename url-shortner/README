@@ -1,0 +1,20 @@
+# URL Shortener
+
+A URL shortening service built using Java, Spring Boot, and H2.
+
+## Tech Stack
+
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- H2 Database
+- Maven
+
+## Features
+
+- Shorten long URLs
+- Custom aliases
+- HTTP 301 redirects
+- Collision-free Base62 short code generation
+- Validation
+- Automated tests
