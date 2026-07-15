@@ -203,7 +203,6 @@ Tests run: 28, Failures: 0, Errors: 0
 - The application uses an **in-memory H2 database**.
 - No database setup is required.
 - All stored URLs are deleted when the application stops or restarts.
-- For more details about the design and implementation, see `ARCHITECTURE.md`.
 
 ---
 
