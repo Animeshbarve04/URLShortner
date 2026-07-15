@@ -1,4 +1,4 @@
-package com.github.Animeshbarve04.urlshortner;
+package com.github.Animeshbarve04.urlshortener;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
