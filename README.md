@@ -209,8 +209,6 @@ Tests run: 28, Failures: 0, Errors: 0
 
 # Additional Reference
 
-<<<<<<< HEAD
+
 If you are unfamiliar with `curl`, refer to the screenshots/images included in this repository for example requests and responses.
 =======
-If you are unfamiliar with `curl`, refer to the screenshots/images included in this repository for example requests and responses.
->>>>>>> 156442479ceeee86fedb11ad3116157e177c36f0
