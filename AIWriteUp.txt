@@ -19,13 +19,13 @@ However, I made the final decisions regarding the application design, class stru
 
 During development, I did not directly use all AI-generated suggestions. I reviewed the generated code carefully and modified or discarded parts that did not match the expected behavior of the application.
 
-One major change I made was related to the API endpoint design. The initial AI-generated implementation used a single controller for both creating short URLs and handling redirects. During testing, I noticed that the endpoint structure was not matching the required API contract. Additionally, the redirect logic was exposing internal application endpoints directly to users.
+One major change I made was related to the API endpoint design. The initial AI-generated implementation used a single controller for both creating short URLs and handling redirects. During testing, I noticed that the endpoint structure did not fully match the required API contract.
 
 Instead of following the single-controller approach, I separated the responsibilities into two different controllers:
 - One controller responsible for creating short URLs through POST requests.
 - Another controller responsible for handling GET requests and redirecting users to the original URLs.
 
-This separation made the API structure clearer, improved maintainability, and prevented unnecessary exposure of internal application logic.
+I made this change because separating URL creation and redirection is a more standard practice in URL shortener systems. Similar designs are commonly used in production URL shorteners like Bitly, where creating a short link and resolving a short link are treated as separate operations. This separation also makes the code easier to maintain, test, and extend in the future.
 
 Another area where I modified the AI-generated solution was error handling. The initial implementation grouped most errors under a generic `500 Internal Server Error` response. I decided this was not ideal because it did not clearly communicate what went wrong to API users.
 
@@ -66,7 +66,9 @@ A production-level alternative would be using a persistent database such as Post
 
 ### 3. Balancing simplicity with security and scalability
 
-The current Base62 ID approach provides a simple and efficient way to generate URLs. However, one possible security concern is that sequential IDs can make URLs predictable.
+The current Base62 ID approach provides a simple and efficient way to generate URLs. However, because the generated IDs are sequential, the short URLs can become predictable. A user who knows one short URL may potentially guess nearby IDs and discover other generated URLs.
+
+For applications where the original URLs contain sensitive information or require stronger privacy guarantees, I would consider using a more randomized identifier generation strategy or adding additional access controls.
 
 For example, if a user receives a short URL generated from ID `100`, they may be able to guess nearby IDs through trial and error and potentially discover other shortened URLs.
 
