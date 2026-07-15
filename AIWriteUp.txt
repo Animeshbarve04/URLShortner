@@ -1,0 +1,92 @@
+
+## 1. What did you ask the AI to do, and what did you write or decide yourself?
+
+I started by providing the problem statement to ChatGPT and asked it to suggest different approaches for building the URL shortener. The purpose was to understand possible solutions, their design patterns, and the advantages and disadvantages of each approach.
+
+ChatGPT suggested multiple approaches for generating and storing short URLs. I then researched these approaches further using Google and ChatGPT, comparing them based on factors such as complexity, performance, scalability, and suitability for the project requirements.
+
+After evaluating the different options, I decided to implement the **Base62-encoded auto-increment ID** approach. I selected this approach because it provides a simple and efficient solution for generating short URLs. Since every ID is unique by design, the generated short codes are also collision-free, which removes the need for retry logic during URL generation.
+
+Another reason for choosing this approach was that it works cleanly with the custom alias feature. Custom aliases are user-provided strings and are not generated from IDs, so they require separate uniqueness validation.
+
+Throughout the development process, I used AI tools for brainstorming solutions, discussing architecture ideas, creating an initial project flow, reviewing code, and generating initial test cases.
+
+However, I made the final decisions regarding the application design, class structure, API behavior, error handling approach, security considerations, and implementation details. I wrote, modified, and tested the code based on my understanding of the requirements.
+
+---
+
+## 2. Where did you override, correct, or throw away the AI’s output — and why?
+
+During development, I did not directly use all AI-generated suggestions. I reviewed the generated code carefully and modified or discarded parts that did not match the expected behavior of the application.
+
+One major change I made was related to the API endpoint design. The initial AI-generated implementation used a single controller for both creating short URLs and handling redirects. During testing, I noticed that the endpoint structure was not matching the required API contract. Additionally, the redirect logic was exposing internal application endpoints directly to users.
+
+Instead of following the single-controller approach, I separated the responsibilities into two different controllers:
+- One controller responsible for creating short URLs through POST requests.
+- Another controller responsible for handling GET requests and redirecting users to the original URLs.
+
+This separation made the API structure clearer, improved maintainability, and prevented unnecessary exposure of internal application logic.
+
+Another area where I modified the AI-generated solution was error handling. The initial implementation grouped most errors under a generic `500 Internal Server Error` response. I decided this was not ideal because it did not clearly communicate what went wrong to API users.
+
+I replaced this approach by creating custom exceptions and meaningful error responses for different scenarios. For example, when a user tries to create a custom alias that already exists, the application should return a proper conflict response instead of a generic server error.
+
+I also ensured that custom aliases have their own uniqueness validation. Since aliases are arbitrary user-provided strings, they cannot rely on the Base62 ID generation logic. They require a database uniqueness check and should return a `409 Conflict` response if the requested alias is already taken.
+
+After completing the initial implementation, I shared the project with Claude for a code review. Claude identified issues in the Base62 encoder logic. I reviewed the feedback, fixed the implementation, and tested it again with multiple scenarios.
+
+I also used Claude to generate initial JUnit test cases. I reviewed and adjusted these tests according to the actual project behavior, fixed dependency and version compatibility issues, and ensured that the complete test suite executed successfully.
+
+---
+
+## 3. The biggest trade-offs I made and the alternatives considered
+
+### 1. Choosing the URL generation method
+
+One of the main design decisions was selecting the approach for generating unique short URLs.
+
+I considered:
+- Random string generation
+- Hash-based URL generation
+- Base62 encoding of an auto-increment ID
+
+I selected the Base62 encoding approach because it provides a predictable and efficient solution. Since the source ID is unique, the generated short code is also unique by construction. This eliminates collision handling and retry logic, making the implementation simpler and easier to reason about.
+
+Hash-based approaches could create shorter-looking URLs, but they require handling possible collisions. Random string generation also requires collision checks and retry mechanisms, which adds additional complexity.
+
+For custom aliases, I treated them separately because they are user-defined values. Unlike generated IDs, custom aliases cannot guarantee uniqueness automatically, so they require a uniqueness constraint and validation before storing them.
+
+### 2. Choosing the storage solution
+
+For storing URL mappings, I decided to use an in-memory H2 database.
+
+The reason behind this decision was to keep the application simple and easy to run without requiring external database setup. It allows the complete functionality of the URL shortener to be demonstrated with minimal configuration.
+
+A production-level alternative would be using a persistent database such as PostgreSQL or MySQL. This would provide data persistence across application restarts but would introduce additional setup and infrastructure requirements.
+
+### 3. Balancing simplicity with security and scalability
+
+The current Base62 ID approach provides a simple and efficient way to generate URLs. However, one possible security concern is that sequential IDs can make URLs predictable.
+
+For example, if a user receives a short URL generated from ID `100`, they may be able to guess nearby IDs through trial and error and potentially discover other shortened URLs.
+
+For a production system where the original URLs need stronger privacy protection, I would consider additional measures such as using random identifiers, adding access controls, or using a non-sequential ID generation strategy.
+
+I decided to keep the current approach because the project requirements focused on implementing the URL shortening functionality, but this security aspect would need to be addressed before using the system in a real-world environment where URL privacy is important.
+
+---
+
+## 4. What is missing, or what would I do with another day?
+
+The current implementation successfully handles creating short URLs, storing URL mappings, custom aliases, and redirecting users to the original URLs. However, there are several improvements that could be added in the future.
+
+Some possible improvements include:
+
+- Using a persistent database instead of in-memory storage so that URLs are not lost after application restart.
+- Improving URL privacy by replacing sequential IDs with a more secure identifier generation strategy.
+- Adding more advanced URL validation and handling additional edge cases.
+- Adding expiration support for generated short URLs.
+- Creating complete API documentation using tools like Swagger/OpenAPI.
+- Adding more integration tests covering complete user workflows.
+- Improving scalability for high-traffic scenarios using caching and database optimization techniques.
+
