@@ -2,6 +2,7 @@ package com.github.Animeshbarve04.urlshortener.service.impl;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.github.Animeshbarve04.urlshortener.dto.request.ShortenUrlRequest;
@@ -22,17 +23,20 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
     private final IdGenerator idGenerator;
     private final ShortCodeGenerator shortCodeGenerator;
     private final RequestValidator requestValidator;
+    private final String baseUrl;
 
     public UrlShortenerServiceImpl(
             UrlMappingRepository repository,
             IdGenerator idGenerator,
             ShortCodeGenerator shortCodeGenerator,
-            RequestValidator requestValidator) {
+            RequestValidator requestValidator,
+            @Value("${app.base-url}") String baseUrl) {
 
         this.repository = repository;
         this.idGenerator = idGenerator;
         this.shortCodeGenerator = shortCodeGenerator;
         this.requestValidator = requestValidator;
+        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -42,25 +46,11 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 
         Long id = idGenerator.nextId();
 
-        String shortCode;
-
-        if (request.getCustomAlias() != null &&
-                !request.getCustomAlias().isBlank()) {
-
-            if (repository.existsByShortCode(request.getCustomAlias())) {
-                throw new AliasAlreadyExistsException(request.getCustomAlias());
-            }
-
-            shortCode = request.getCustomAlias();
-
-        } else {
-
-            shortCode = shortCodeGenerator.generate(id);
-
-        }
+        String shortCode = hasCustomAlias(request)
+                ? getValidatedCustomAlias(request)
+                : shortCodeGenerator.generate(id);
 
         UrlMapping mapping = new UrlMapping();
-
         mapping.setId(id);
         mapping.setOriginalUrl(request.getUrl());
         mapping.setShortCode(shortCode);
@@ -70,7 +60,7 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 
         return new ShortenUrlResponse(
                 shortCode,
-                "http://localhost:8080/" + shortCode
+                baseUrl + "/" + shortCode
         );
     }
 
@@ -83,4 +73,26 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
                 .getOriginalUrl();
     }
 
+    /**
+     * Returns true if the request contains a non-blank custom alias.
+     */
+    private boolean hasCustomAlias(ShortenUrlRequest request) {
+
+        return request.getCustomAlias() != null
+                && !request.getCustomAlias().isBlank();
+    }
+
+    /**
+     * Checks whether the requested alias is available and returns it.
+     */
+    private String getValidatedCustomAlias(ShortenUrlRequest request) {
+
+        String alias = request.getCustomAlias();
+
+        if (repository.existsByShortCode(alias)) {
+            throw new AliasAlreadyExistsException(alias);
+        }
+
+        return alias;
+    }
 }
