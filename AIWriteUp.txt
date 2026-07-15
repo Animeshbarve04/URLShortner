@@ -9,7 +9,7 @@ After evaluating the different options, I decided to implement the **Base62-enco
 
 Another reason for choosing this approach was that it works cleanly with the custom alias feature. Custom aliases are user-provided strings and are not generated from IDs, so they require separate uniqueness validation.
 
-Throughout the development process, I used AI tools for brainstorming solutions, discussing architecture ideas, creating an initial project flow, reviewing code, and generating initial test cases.
+Throughout the development process, I used AI tools for brainstorming solutions, discussing architecture ideas, creating an initial project flow, writing code, and generating initial test cases.
 
 However, I made the final decisions regarding the application design, class structure, API behavior, error handling approach, security considerations, and implementation details. I wrote, modified, and tested the code based on my understanding of the requirements.
 
