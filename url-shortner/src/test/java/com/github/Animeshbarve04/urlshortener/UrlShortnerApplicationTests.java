@@ -1,4 +1,4 @@
-package com.github.Animeshbarve04.url_shortner;
+package com.github.Animeshbarve04.urlshortener;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

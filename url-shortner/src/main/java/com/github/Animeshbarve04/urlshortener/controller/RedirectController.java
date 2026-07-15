@@ -29,6 +29,6 @@ public class RedirectController {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(originalUrl));
 
-        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
     }
 }

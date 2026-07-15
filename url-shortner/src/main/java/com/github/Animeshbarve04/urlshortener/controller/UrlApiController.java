@@ -12,7 +12,6 @@ import com.github.Animeshbarve04.urlshortener.service.UrlShortenerService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/urls")
 @Validated
 public class UrlApiController {
 

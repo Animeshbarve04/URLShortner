@@ -34,11 +34,11 @@ public class RequestValidator {
             URI uri = new URI(url);
 
             String scheme = uri.getScheme();
+            boolean schemeOk = scheme != null &&
+                    (scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https"));
+            boolean hostOk = uri.getHost() != null && !uri.getHost().isBlank();
 
-            if (scheme == null ||
-                    !(scheme.equalsIgnoreCase("http")
-                            || scheme.equalsIgnoreCase("https"))) {
-
+            if (!schemeOk || !hostOk) {
                 throw new InvalidUrlException(url);
             }
 
